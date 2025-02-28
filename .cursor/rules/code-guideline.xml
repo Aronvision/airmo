@@ -1,0 +1,179 @@
+<prompt>
+    <introduction>
+        Use this prompt to generate well-structured Next.js + Supabase project code with an emphasis on clean architecture, minimal responsibilities per component, and a domain-based folder structure. All instructions and guidelines are in English. This prompt ensures minimal mistakes, enforces a consistent coding convention, and leverages the libraries listed below.
+    </introduction>
+
+    <instructions>
+        <purpose>
+            You are building a Next.js (latest version) + Supabase project that references previously created PRD, IA, Use Case, and Design Guide documents. You must keep the design simple, minimal, and easy to maintain, following good engineering practices and domain-based folder organization.
+        </purpose>
+        <importantNotes>
+            - Write modular, testable code.
+            - Each component should have a single responsibility.
+            - Group related files in domain-specific folders (e.g., `users`, `auth`, `reservations`).
+            - Strictly follow recommended coding conventions mentioned below.
+            - Do not store secrets in the client code.
+            - Validate all Supabase queries and handle errors gracefully.
+        </importantNotes>
+    </instructions>
+
+    <codingConventions>
+        <preferredLanguage>TypeScript</preferredLanguage>
+        <formatter>
+            Use Prettier and ESLint to maintain uniform code style:
+            - Prettier (https://prettier.io/) for automated formatting
+            - ESLint (https://eslint.org/docs/latest/) with recommended rules
+        </formatter>
+        <naming>
+            - Use PascalCase for components (e.g., `UserProfileForm`).
+            - Use camelCase for variables and functions (e.g., `fetchUserData`).
+            - Use consistent file naming, either all lowercase with hyphens (e.g., `user-profile.tsx`) or strict PascalCase for components.
+        </naming>
+        <comments>
+            - Write clear, concise JSDoc or TSDoc for complex logic or domain-specific details.
+            - Avoid overly verbose or redundant comments.
+        </comments>
+    </codingConventions>
+
+    <folderStructure>
+        <explanation>
+            This structure uses Next.js App Router (for Next.js 13 or above) and organizes files per domain (feature-focused). Each domain folder contains components, hooks, services, and page routes relevant to that domain.
+        </explanation>
+        <example>
+            app/
+              ├─ layout.tsx
+              ├─ page.tsx  <!-- Root route ("/") -->
+              ├─ globals.css
+              ├─ (auth)/
+              │    ├─ login/
+              │    │    └─ page.tsx
+              │    └─ register/
+              │         └─ page.tsx
+              ├─ (dashboard)/
+              │    ├─ page.tsx
+              │    ├─ components/
+              │    └─ hooks/
+              ├─ (reservations)/
+              │    ├─ new/
+              │    │   └─ page.tsx
+              │    ├─ page.tsx
+              │    └─ components/
+              └─ api/
+                   └─ ...   <!-- Route handlers if needed -->
+            lib/
+              ├─ supabaseClient.ts
+              ├─ utils/
+              │    └─ index.ts
+            domains/
+              ├─ reservations/
+              │    ├─ services/
+              │    └─ types/
+              └─ users/
+                  ├─ services/
+                  └─ types/
+            components/
+              ├─ shared/     <!-- Reusable UI components across domains -->
+              └─ layout/     <!-- Layout components, such as Headers, Sidebars -->
+        </example>
+    </folderStructure>
+
+    <essentialLibraries>
+        <library>
+            <name>shadcn/ui</name>
+            <url>https://github.com/shadcn/ui</url>
+            <description>
+                A component library providing ready-to-use, accessible, and customizable components. Helps keep the UI consistent while maintaining a minimal style. Customize it within your Tailwind setup for brand consistency.
+            </description>
+            <caution>
+                Always read their docs on theming, and ensure you only import necessary components to avoid bloat.
+            </caution>
+        </library>
+        <library>
+            <name>Tailwind CSS</name>
+            <url>https://tailwindcss.com/docs</url>
+            <description>
+                Utility-first CSS framework for rapid UI development. Maintain consistent spacing, colors, typography, and breakpoints as defined in your design system.
+            </description>
+            <caution>
+                Keep class names readable and avoid inline style chaos by extracting reusable classes or using theme customizations in the config file.
+            </caution>
+        </library>
+        <library>
+            <name>react-hook-form</name>
+            <url>https://react-hook-form.com/get-started</url>
+            <description>
+                Allows building flexible and extensible forms with minimal re-renders. Emphasizes better performance and simpler validation.
+            </description>
+            <caution>
+                Always define proper default values and validation schemas. Use the DevTools if needed for debugging.
+            </caution>
+        </library>
+        <library>
+            <name>zustand</name>
+            <url>https://github.com/pmndrs/zustand</url>
+            <description>
+                A small, fast state-management library. Ideal for maintaining global states like user sessions, settings, or ephemeral UI states.
+            </description>
+            <caution>
+                Keep the store minimal. Avoid placing large or complex objects in the store. Use selectors to optimize performance.
+            </caution>
+        </library>
+        <library>
+            <name>@tanstack/react-query</name>
+            <url>https://tanstack.com/query/latest</url>
+            <description>
+                Manages server state effectively. Helps with data fetching, caching, synchronizing, and updating.
+            </description>
+            <caution>
+                Invalidate queries appropriately after mutations. Keep query keys consistent for reusability.
+            </caution>
+        </library>
+    </essentialLibraries>
+
+    <bestPractices>
+        <singleResponsibility>
+            Each component handles one specific concern. If a page or component grows too large, break it down into smaller parts.
+        </singleResponsibility>
+        <domainSeparation>
+            Group features by domain (auth, reservations, dashboard) instead of by file type. This enhances discoverability and maintainability.
+        </domainSeparation>
+        <errorHandling>
+            Handle all Supabase or API errors gracefully. Show helpful messages to users instead of raw errors.
+        </errorHandling>
+        <asyncData>
+            Use React Query for data fetching. Wrap components that need server data in Suspense and handle loading/error states with Skeleton or fallback UIs.
+        </asyncData>
+        <responsiveDesign>
+            Make sure each page includes responsive Tailwind classes (`sm:`, `md:`, `lg:`, `xl:`) for a fluid layout from mobile to desktop.
+        </responsiveDesign>
+        <security>
+            - Do not commit secrets to Git. Use environment variables.
+            - Validate all input from forms on both client and server sides.
+        </security>
+    </bestPractices>
+
+    <doNotDoList>
+        <item>Do not place supabase keys or secrets in client-side code.</item>
+        <item>Do not use magic strings across components. Use constants or enumerations.</item>
+        <item>Do not bypass form validation logic. Always integrate `react-hook-form` or appropriate validations.</item>
+        <item>Do not create monolithic components with too many responsibilities.</item>
+        <item>Do not implement your own state management unless absolutely necessary. Use zustand or React Query for data flow.</item>
+    </doNotDoList>
+
+    <rationaleAndImplementationGuides>
+        <rationale>
+            - Keeping components small and domain-focused improves clarity and testability.
+            - Folder organization by domain simplifies navigation when codebases scale.
+            - Following naming conventions ensures team readability.
+            - Using established libraries (shadcn/ui, tailwindcss, etc.) saves time and leverages reliable community support.
+        </rationale>
+        <implementationGuide>
+            1. Think thoroughly about each domain or feature before coding: define the data structures, potential errors, and UI states.
+            2. Start with the folder structure first; create placeholders for each domain (reservations, auth, etc.).
+            3. Set up Tailwind and shadcn/ui early so that you maintain visual consistency from the start.
+            4. Configure React Query (tanstack) to handle all server state. Combine it with zustand if you need local UI states.
+            5. Create a minimal supabaseClient in `lib/supabaseClient.ts` to avoid duplicating logic for database operations.
+            6. Use environment variables for all supabase keys (e.g., `.env.local`) and never commit them to the repo.
+        </implementationGuide>
+    </rationaleAndImplementationGuides>
+</prompt>
